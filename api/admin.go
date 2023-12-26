@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/TravisRoad/gomarkit/errcode"
-	"github.com/TravisRoad/gomarkit/model"
-	"github.com/TravisRoad/gomarkit/service"
+	"github.com/TravisRoad/goshower/errcode"
+	"github.com/TravisRoad/goshower/model"
+	"github.com/TravisRoad/goshower/service"
 	"github.com/gin-gonic/gin"
 )
 

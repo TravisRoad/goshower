@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/TravisRoad/gomarkit/global"
+	"github.com/TravisRoad/goshower/global"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -21,6 +21,7 @@ func initZap() *zap.Logger {
 	)
 	cores := []zapcore.Core{stdoutCore}
 
+	// filerotate
 	if cfg.Rotate {
 		w := zapcore.AddSync(&lumberjack.Logger{
 			Filename:   fmt.Sprintf("%s/log.log", cfg.Dir),

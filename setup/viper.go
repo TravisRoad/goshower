@@ -6,8 +6,8 @@ import (
 
 	"log/slog"
 
-	"github.com/TravisRoad/gomarkit/global"
-	"github.com/TravisRoad/gomarkit/helper"
+	"github.com/TravisRoad/goshower/global"
+	"github.com/TravisRoad/goshower/helper"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )

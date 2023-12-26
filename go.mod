@@ -1,4 +1,4 @@
-module github.com/TravisRoad/gomarkit
+module github.com/TravisRoad/goshower
 
 go 1.21.1
 

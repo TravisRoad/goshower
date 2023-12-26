@@ -1,6 +1,6 @@
 package setup
 
-import "github.com/TravisRoad/gomarkit/global"
+import "github.com/TravisRoad/goshower/global"
 
 func Setup() {
 	InitViper()

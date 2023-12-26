@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/TravisRoad/gomarkit/global"
-	"github.com/TravisRoad/gomarkit/setup"
+	"github.com/TravisRoad/goshower/global"
+	"github.com/TravisRoad/goshower/setup"
 )
 
 func main() {

@@ -1,7 +1,7 @@
 package global
 
 import (
-	"github.com/TravisRoad/gomarkit/config"
+	"github.com/TravisRoad/goshower/config"
 	"github.com/redis/go-redis/v9"
 	"github.com/sqids/sqids-go"
 	"go.uber.org/zap"

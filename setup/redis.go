@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/TravisRoad/gomarkit/global"
+	"github.com/TravisRoad/goshower/global"
 	"github.com/redis/go-redis/v9"
 )
 

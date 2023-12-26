@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/TravisRoad/gomarkit/errcode"
-	"github.com/TravisRoad/gomarkit/global"
-	"github.com/TravisRoad/gomarkit/helper"
+	"github.com/TravisRoad/goshower/errcode"
+	"github.com/TravisRoad/goshower/global"
+	"github.com/TravisRoad/goshower/helper"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

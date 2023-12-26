@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/TravisRoad/gomarkit/global"
-	"github.com/TravisRoad/gomarkit/router"
+	"github.com/TravisRoad/goshower/global"
+	"github.com/TravisRoad/goshower/router"
 	"github.com/boj/redistore"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"

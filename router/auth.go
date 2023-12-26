@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/TravisRoad/gomarkit/api"
+	"github.com/TravisRoad/goshower/api"
 	"github.com/gin-gonic/gin"
 )
 

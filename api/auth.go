@@ -3,10 +3,10 @@ package api
 import (
 	"net/http"
 
-	"github.com/TravisRoad/gomarkit/errcode"
-	"github.com/TravisRoad/gomarkit/global"
-	"github.com/TravisRoad/gomarkit/model"
-	"github.com/TravisRoad/gomarkit/service"
+	"github.com/TravisRoad/goshower/errcode"
+	"github.com/TravisRoad/goshower/global"
+	"github.com/TravisRoad/goshower/model"
+	"github.com/TravisRoad/goshower/service"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"

@@ -3,8 +3,8 @@ package setup
 import (
 	"log/slog"
 
-	"github.com/TravisRoad/gomarkit/global"
-	"github.com/TravisRoad/gomarkit/model"
+	"github.com/TravisRoad/goshower/global"
+	"github.com/TravisRoad/goshower/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

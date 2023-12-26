@@ -3,8 +3,8 @@ package service
 import (
 	"fmt"
 
-	"github.com/TravisRoad/gomarkit/global"
-	"github.com/TravisRoad/gomarkit/model"
+	"github.com/TravisRoad/goshower/global"
+	"github.com/TravisRoad/goshower/model"
 	"golang.org/x/crypto/bcrypt"
 )
 
