@@ -4,7 +4,7 @@ import (
 	"log/slog"
 
 	"github.com/TravisRoad/goshower/global"
-	"github.com/TravisRoad/goshower/model"
+	"github.com/TravisRoad/goshower/internal/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

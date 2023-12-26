@@ -1,9 +1,9 @@
 package router
 
 import (
-	"github.com/TravisRoad/goshower/api"
 	"github.com/TravisRoad/goshower/global"
-	"github.com/TravisRoad/goshower/middleware"
+	"github.com/TravisRoad/goshower/internal/api"
+	"github.com/TravisRoad/goshower/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 

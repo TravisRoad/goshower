@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/TravisRoad/goshower/global"
-	"github.com/TravisRoad/goshower/model"
+	"github.com/TravisRoad/goshower/internal/model"
 	"golang.org/x/crypto/bcrypt"
 )
 

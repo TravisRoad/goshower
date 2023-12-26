@@ -5,7 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/TravisRoad/goshower/global"
-	"github.com/TravisRoad/goshower/setup"
+	"github.com/TravisRoad/goshower/internal/setup"
 )
 
 func main() {

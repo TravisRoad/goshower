@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/TravisRoad/goshower/errcode"
+	"github.com/TravisRoad/goshower/internal/errcode"
 	"github.com/gin-gonic/gin"
 )
 

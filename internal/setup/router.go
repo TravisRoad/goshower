@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/TravisRoad/goshower/global"
-	"github.com/TravisRoad/goshower/router"
+	"github.com/TravisRoad/goshower/internal/router"
 	"github.com/boj/redistore"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
