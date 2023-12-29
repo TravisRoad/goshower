@@ -19,8 +19,10 @@ func debugUserinfo(s sessions.Session) (map[string]interface{}, error) {
 	uinfo["role"] = "admin"
 
 	s.Set(global.USER_INFO_KEY, uinfo)
-	err := s.Save()
-	return uinfo, fmt.Errorf("debugUserinfo failed to save session: %w", err)
+	if err := s.Save(); err != nil {
+		return nil, fmt.Errorf("debugUserinfo failed to save session: %w", err)
+	}
+	return uinfo, nil
 }
 
 func saveUserInfo(uinfo map[string]interface{}, c *gin.Context) {
