@@ -8,6 +8,7 @@ const (
 	ParamParseFailed = 10
 	RoleMismatch     = 11
 	SqidsParseFailed = 12
+	QueryParseFailed = 13
 
 	// auth
 	LoginFailed   = 100

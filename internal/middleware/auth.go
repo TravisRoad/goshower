@@ -13,7 +13,7 @@ import (
 )
 
 func debugUserinfo(s sessions.Session) (map[string]interface{}, error) {
-	uinfo := make(map[string]interface{}, 0)
+	uinfo := make(map[string]interface{})
 	uinfo["id"] = 1
 	uinfo["username"] = "admin"
 	uinfo["role"] = "admin"
