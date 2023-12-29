@@ -1,15 +1,11 @@
 package bangumi
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 )
 
-func (c *Client) Search(query string, options SearchOptions) (SearchResp, error) {
-	searchResp := SearchResp{}
+func (c *Client) Search(query string, options SearchOptions) (*SearchResp, error) {
 	u := url.URL{
 		Scheme: "https",
 		Host:   "api.bgm.tv",
@@ -31,36 +27,24 @@ func (c *Client) Search(query string, options SearchOptions) (SearchResp, error)
 	u.RawQuery = q.Encode()
 	url := u.String()
 
-	client := &http.Client{}
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return searchResp, err
+	searchResp := SearchResp{}
+	if err := c.Get(url, &searchResp); err != nil {
+		return nil, err
 	}
 
-	if len(c.UserAgent) != 0 {
-		req.Header.Add("User-Agent", c.UserAgent)
-	}
-	if len(c.Token) != 0 {
-		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.Token))
-	}
+	return &searchResp, nil
+}
 
-	resp, err := client.Do(req)
-	if err != nil {
-		return searchResp, err
+func (c *Client) GetSubjectDetail(id int) (*SubjectDetail, error) {
+	u := url.URL{
+		Scheme: "https",
+		Host:   "api.bgm.tv",
+		Path:   fmt.Sprintf("/v0/subjects/%d", id),
 	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return searchResp, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	url := u.String()
+	subjectDetail := SubjectDetail{}
+	if err := c.Get(url, &subjectDetail); err != nil {
+		return nil, err
 	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return searchResp, err
-	}
-	if err := json.Unmarshal(body, &searchResp); err != nil {
-		return searchResp, err
-	}
-
-	return searchResp, nil
+	return &subjectDetail, nil
 }

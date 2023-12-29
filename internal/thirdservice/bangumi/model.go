@@ -22,6 +22,49 @@ const (
 	ResGroupLarge  = "large"
 )
 
+type SubjectDetail struct {
+	ID       int    `json:"id"`
+	Type     int    `json:"type"`
+	Name     string `json:"name"`
+	NameCn   string `json:"name_cn"`
+	Summary  string `json:"summary"`
+	Nsfw     bool   `json:"nsfw"`
+	Locked   bool   `json:"locked"`
+	Date     string `json:"date"`
+	Platform string `json:"platform"`
+	Images   struct {
+		Large  string `json:"large"`
+		Common string `json:"common"`
+		Medium string `json:"medium"`
+		Small  string `json:"small"`
+		Grid   string `json:"grid"`
+	} `json:"images"`
+	Infobox []struct {
+		Key   string `json:"key"`
+		Value string `json:"value"`
+	} `json:"infobox"`
+	Volumes       int `json:"volumes"`
+	Eps           int `json:"eps"`
+	TotalEpisodes int `json:"total_episodes"`
+	Rating        struct {
+		Rank  int         `json:"rank"`
+		Total int         `json:"total"`
+		Count map[int]int `json:"count"`
+		Score int         `json:"score"`
+	} `json:"rating"`
+	Collection struct {
+		Wish    int `json:"wish"`
+		Collect int `json:"collect"`
+		Doing   int `json:"doing"`
+		OnHold  int `json:"on_hold"`
+		Dropped int `json:"dropped"`
+	} `json:"collection"`
+	Tags []struct {
+		Name  string `json:"name"`
+		Count int    `json:"count"`
+	} `json:"tags"`
+}
+
 type SearchItem struct {
 	ID         int    `json:"id"`
 	URL        string `json:"url"`
