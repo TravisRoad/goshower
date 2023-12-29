@@ -1,4 +1,4 @@
-package api
+package handler
 
 import (
 	"net/http"
@@ -12,14 +12,24 @@ import (
 	"go.uber.org/zap"
 )
 
-type AuthApi struct{}
+type AuthHandler struct{}
 
 type LoginReq struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-func (aa *AuthApi) Login(c *gin.Context) {
+// Login godoc
+// @Summary      login
+// @Description  login
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @param        req  body  LoginReq  true  "login info"
+// @Success      200  {object}  AuthResponse
+// @Failure      500  {object}  BaseResponse
+// @Router       /auth/login [post]
+func (aa *AuthHandler) Login(c *gin.Context) {
 	session := sessions.Default(c)
 	if uinfo, ok := session.Get(global.USER_INFO_KEY).(map[string]interface{}); ok {
 		global.Logger.Info("already login", zap.String("username", uinfo["username"].(string)))
@@ -75,24 +85,39 @@ func (aa *AuthApi) Login(c *gin.Context) {
 	})
 }
 
-func (aa *AuthApi) Logout(c *gin.Context) {
+// Logout godoc
+// @Summary      logout
+// @Description  logout
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  BaseResponse
+// @Failure      500  {object}  BaseResponse
+// @Router       /auth/logout [post]
+func (aa *AuthHandler) Logout(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Clear()
 	if err := session.Save(); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"code": errcode.SessionSave,
-			"msg":  err.Error(),
-		})
+		NewHTTPError(c, errcode.SessionSave, err.Error(), http.StatusInternalServerError)
 		global.Logger.Info("failed to save session", zap.Error(err))
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"code": 0,
-		"msg":  "success",
+	c.JSON(http.StatusOK, BaseResponse{
+		Code: 0,
+		Msg:  "success",
 	})
 }
 
-func (aa *AuthApi) IsLogin(c *gin.Context) {
+// IsLogin godoc
+// @Summary      IsLogin
+// @Description  Islogin
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  AuthResponse
+// @Failure      401  {object}  BaseResponse
+// @Router       /auth/islogin [get]
+func (aa *AuthHandler) IsLogin(c *gin.Context) {
 	session := sessions.Default(c)
 	uinfo, ok := session.Get(global.USER_INFO_KEY).(map[string]interface{})
 	if !ok {

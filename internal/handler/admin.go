@@ -1,4 +1,4 @@
-package api
+package handler
 
 import (
 	"net/http"
@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AdminApi struct{}
+type AdminHandler struct{}
 
 type UpdateUserRequest struct {
 	ID       uint   `json:"id"`
@@ -29,7 +29,7 @@ type GetUsersResponse struct {
 	} `json:"data"`
 }
 
-func (aa *AdminApi) GetUsers(c *gin.Context) {
+func (aa *AdminHandler) GetUsers(c *gin.Context) {
 	us := new(service.UserService)
 
 	page, size := getPageAndSize(c)
@@ -61,7 +61,7 @@ func (aa *AdminApi) GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (aa *AdminApi) UpdateUser(c *gin.Context) {
+func (aa *AdminHandler) UpdateUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -100,7 +100,7 @@ func (aa *AdminApi) UpdateUser(c *gin.Context) {
 	})
 }
 
-func (aa *AdminApi) DeleteUser(c *gin.Context) {
+func (aa *AdminHandler) DeleteUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -125,7 +125,7 @@ func (aa *AdminApi) DeleteUser(c *gin.Context) {
 	})
 }
 
-func (aa *AdminApi) AddUser(c *gin.Context) {
+func (aa *AdminHandler) AddUser(c *gin.Context) {
 	u := model.User{}
 	if err := c.ShouldBindJSON(&u); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

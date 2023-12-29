@@ -1,4 +1,4 @@
-package api
+package handler
 
 import (
 	"strconv"
@@ -28,6 +28,14 @@ func getPageAndSize(c *gin.Context) (page int, size int) {
 	if page <= 0 {
 		page = 1
 	}
-	size = clamp(size, 10, 100)
+	size = clamp(size, 5, 100)
 	return
+}
+
+func NewHTTPError(c *gin.Context, code int, msg string, statHTTP int) {
+	er := BaseResponse{
+		Code: code,
+		Msg:  msg,
+	}
+	c.JSON(statHTTP, er)
 }
