@@ -1,11 +1,11 @@
 package service
 
 import (
-	"fmt"
 	"os"
 	"sync"
 	"time"
 
+	"github.com/TravisRoad/goshower/global"
 	"github.com/TravisRoad/goshower/internal/model"
 	"github.com/TravisRoad/goshower/internal/thirdservice/bangumi"
 )
@@ -33,6 +33,7 @@ func GetAnimeSearchService() Searcher {
 			bss := &BangumiSearchService{
 				Client: cli,
 				Type:   bangumi.SubjectTypeAnime,
+				Source: global.Bangumi,
 			}
 			animeSearchService = bss
 		})
@@ -43,6 +44,7 @@ func GetAnimeSearchService() Searcher {
 type BangumiSearchService struct {
 	Client *bangumi.Client
 	Type   int
+	Source global.Source
 }
 
 func (s *BangumiSearchService) Search(query string, page, size int) (*model.SearchResult, error) {
@@ -71,9 +73,15 @@ func (s *BangumiSearchService) Search(query string, page, size int) (*model.Sear
 		searchItem.Date = date
 		searchItem.Desc = item.Summary
 		searchItem.Rating = uint8(min(item.Rating.Score*10, 100.0))
-		searchItem.Source = "bangumi"
+		searchItem.Source = s.Source
 		searchItem.Pic = item.Images.Common
-		searchItem.ID = fmt.Sprint(item.ID)
+
+		id, err := global.Sqids.Encode([]uint64{uint64(s.Source), uint64(item.ID)})
+		if err != nil {
+			return nil, err
+		}
+
+		searchItem.ID = id
 		sr.Items = append(sr.Items, searchItem)
 	}
 
