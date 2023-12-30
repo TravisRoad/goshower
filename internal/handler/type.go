@@ -1,6 +1,8 @@
 package handler
 
-import "github.com/TravisRoad/goshower/internal/model"
+import (
+	"github.com/TravisRoad/goshower/internal/model"
+)
 
 type BaseResponse struct {
 	Code int    `json:"code"`

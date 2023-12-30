@@ -3,6 +3,8 @@ package handler
 import (
 	"strconv"
 
+	"github.com/TravisRoad/goshower/global"
+	"github.com/TravisRoad/goshower/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,6 +32,16 @@ func getPageAndSize(c *gin.Context) (page int, size int) {
 	}
 	size = clamp(size, 5, 100)
 	return
+}
+
+func getSourceType(c *gin.Context) (st service.SourceType) {
+	// source := c.Query("source")
+	// t := c.Query("type")
+
+	return service.SourceType{
+		Source: global.SourceBangumi,
+		Type:   global.TypeAnime,
+	}
 }
 
 func NewHTTPError(c *gin.Context, code int, msg string, statHTTP int) {

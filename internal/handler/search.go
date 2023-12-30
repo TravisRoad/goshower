@@ -13,26 +13,34 @@ type SearchHandler struct{}
 func (sa *SearchHandler) Search(c *gin.Context) {
 	query := c.Query("q")
 	if len(query) == 0 {
-		c.JSON(http.StatusOK, gin.H{
-			"msg":  "query is empty",
-			"code": errcode.QueryParseFailed,
-		})
+		NewHTTPError(
+			c,
+			http.StatusBadRequest,
+			"query is empty",
+			errcode.QueryParseFailed,
+		)
 		return
 	}
 	page, size := getPageAndSize(c)
 
-	animeSearcher := service.GetAnimeSearchService()
-	animeResult, err := animeSearcher.Search(query, page, size)
+	searcher := service.GetSearcher(getSourceType(c))
+	result, err := searcher.Search(query, page, size)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"msg":  err.Error(),
-			"code": errcode.Failed,
-		})
+		NewHTTPError(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+			errcode.Failed,
+		)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": 0,
 		"msg":  "",
-		"data": animeResult,
+		"data": result,
 	})
+}
+
+func (sa *SearchHandler) SearchSourceType(c *gin.Context) {
+
 }
