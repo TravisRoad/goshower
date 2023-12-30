@@ -11,14 +11,17 @@ subject_type
 4 = game
 6 = real
 */
+type SubjectType int
 
 const (
-	SubjectTypeBook  = 1
-	SubjectTypeAnime = 2
-	SubjectTypeMusic = 3
-	SubjectTypeGame  = 4
-	SubjectTypeReal  = 6
+	SubjectTypeBook  SubjectType = 1
+	SubjectTypeAnime SubjectType = 2
+	SubjectTypeMusic SubjectType = 3
+	SubjectTypeGame  SubjectType = 4
+	SubjectTypeReal  SubjectType = 6
+)
 
+const (
 	ResGroupSmall  = "small"
 	ResGroupMedium = "medium"
 	ResGroupLarge  = "large"
