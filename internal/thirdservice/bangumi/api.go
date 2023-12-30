@@ -5,7 +5,7 @@ import (
 	"net/url"
 )
 
-func (c *Client) Search(query string, options SearchOptions) (*SearchResp, error) {
+func (c *Client) Search(query string, options SearchOption) (*SearchResp, error) {
 	u := url.URL{
 		Scheme: "https",
 		Host:   c.Host,

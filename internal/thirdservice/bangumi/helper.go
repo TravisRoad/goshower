@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (c *Client) JsonRequest(url string, method string, dst any) error {
+func (c *Client) makeRequest(url string, method string, dst any) error {
 	client := c.Cli
 	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
@@ -38,9 +38,9 @@ func (c *Client) JsonRequest(url string, method string, dst any) error {
 }
 
 func (c *Client) Get(url string, dst any) error {
-	return c.JsonRequest(url, http.MethodGet, dst)
+	return c.makeRequest(url, http.MethodGet, dst)
 }
 
 func (c *Client) Post(url string, dst any) error {
-	return c.JsonRequest(url, http.MethodPost, dst)
+	return c.makeRequest(url, http.MethodPost, dst)
 }

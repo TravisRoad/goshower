@@ -1,5 +1,7 @@
 package bangumi
 
+import "encoding/json"
+
 /*
 https://bangumi.github.io/api/#model-Legacy_SubjectType
 subject_type
@@ -40,8 +42,8 @@ type SubjectDetail struct {
 		Grid   string `json:"grid"`
 	} `json:"images"`
 	Infobox []struct {
-		Key   string `json:"key"`
-		Value string `json:"value"`
+		Key   string          `json:"key"`
+		Value json.RawMessage `json:"value"`
 	} `json:"infobox"`
 	Volumes       int `json:"volumes"`
 	Eps           int `json:"eps"`
@@ -101,7 +103,7 @@ type SearchResp struct {
 	List    []SearchItem `json:"list"`
 }
 
-type SearchOptions struct {
+type SearchOption struct {
 	Start         int
 	MaxResult     int
 	Type          int
