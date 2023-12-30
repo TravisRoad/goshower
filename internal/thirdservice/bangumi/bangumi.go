@@ -1,13 +1,10 @@
 package bangumi
 
+import "net/http"
+
 type Client struct {
+	Cli       *http.Client
+	Host      string
 	Token     string
 	UserAgent string
-}
-
-func NewClient(token string, userAgent string) *Client {
-	return &Client{
-		Token:     token,
-		UserAgent: userAgent,
-	}
 }

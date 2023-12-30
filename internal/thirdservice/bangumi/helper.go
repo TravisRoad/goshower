@@ -8,7 +8,7 @@ import (
 )
 
 func (c *Client) JsonRequest(url string, method string, dst any) error {
-	client := &http.Client{}
+	client := c.Cli
 	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		return err

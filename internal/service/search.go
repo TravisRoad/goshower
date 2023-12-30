@@ -1,6 +1,7 @@
 package service
 
 import (
+	"net/http"
 	"os"
 	"sync"
 	"time"
@@ -18,6 +19,7 @@ var (
 const (
 	BangumiToken     = "BANGUMI_TOKEN"
 	BangumiUserAgent = "BANGUMI_USER_AGENT"
+	BangumiHost      = "api.bgm.tv"
 )
 
 type Searcher interface {
@@ -29,7 +31,12 @@ func GetAnimeSearchService() Searcher {
 		once.Do(func() {
 			token, _ := os.LookupEnv(BangumiToken)
 			ua, _ := os.LookupEnv(BangumiUserAgent)
-			cli := bangumi.NewClient(token, ua)
+			cli := &bangumi.Client{
+				Cli:       &http.Client{},
+				Host:      BangumiHost,
+				Token:     token,
+				UserAgent: ua,
+			}
 			bss := &BangumiSearchService{
 				Client: cli,
 				Type:   bangumi.SubjectTypeAnime,
