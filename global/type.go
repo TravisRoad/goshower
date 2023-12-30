@@ -4,16 +4,19 @@ package global
 type Source int
 
 const (
-	Bangumi Source = iota
-	TMDB
-	Douban
+	SourceBangumi Source = iota
+	SourceTMDB
+	SourceDouban
+	SourceOther
 )
 
 //go:generate stringer -type=Type
 type Type int
 
 const (
-	Anime Type = iota
-	Movie
-	Game
+	TypeAnime Type = iota
+	TypeMovie
+	TypeGame
+	TypeBook
+	TypeMusic
 )
