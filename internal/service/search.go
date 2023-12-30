@@ -11,10 +11,19 @@ import (
 	"github.com/TravisRoad/goshower/internal/thirdservice/bangumi"
 )
 
+type SearchSingleton struct {
+	Once     *sync.Once
+	Searcher Searcher
+}
+
 var (
-	once               = &sync.Once{}
-	animeSearchService Searcher
+	bangumiSearcher = SearchSingleton{
+		Once:     &sync.Once{},
+		Searcher: nil,
+	}
 )
+
+var fallBackSearchService = &FallBackSearchService{}
 
 const (
 	BangumiToken     = "BANGUMI_TOKEN"
@@ -22,13 +31,33 @@ const (
 	BangumiHost      = "api.bgm.tv"
 )
 
+type ISearchService interface {
+	Search(query string, page, size int, st SourceType) (*model.SearchResult, error)
+}
+
+type SearchService struct{}
+
+func (s *SearchService) Search(query string, page, size int, st SourceType) (*model.SearchResult, error) {
+	searcher := GetSearcher(st)
+	return searcher.Search(query, page, size)
+}
+
 type Searcher interface {
 	Search(query string, page, size int) (*model.SearchResult, error)
 }
 
-func GetAnimeSearchService() Searcher {
-	if animeSearchService == nil {
-		once.Do(func() {
+func GetSearcher(st SourceType) Searcher {
+	switch st.Source {
+	case global.SourceBangumi:
+		return GetBangumiSearcher(st.Type)
+	default:
+		return fallBackSearchService
+	}
+}
+
+func GetBangumiSearcher(t global.Type) Searcher {
+	if bangumiSearcher.Searcher == nil {
+		bangumiSearcher.Once.Do(func() {
 			token, _ := os.LookupEnv(BangumiToken)
 			ua, _ := os.LookupEnv(BangumiUserAgent)
 			cli := &bangumi.Client{
@@ -39,13 +68,13 @@ func GetAnimeSearchService() Searcher {
 			}
 			bss := &BangumiSearchService{
 				Client: cli,
-				Type:   bangumi.SubjectTypeAnime,
-				Source: global.Bangumi,
+				Type:   int(toBangumiType(t)),
+				Source: global.SourceBangumi,
 			}
-			animeSearchService = bss
+			bangumiSearcher.Searcher = bss
 		})
 	}
-	return animeSearchService
+	return bangumiSearcher.Searcher
 }
 
 type BangumiSearchService struct {
@@ -58,7 +87,7 @@ func (s *BangumiSearchService) Search(query string, page, size int) (*model.Sear
 	maxResult := min(size, 25)
 	start := min((page-1)*maxResult, 0)
 
-	searchResult, err := s.Client.Search(query, bangumi.SearchOptions{
+	searchResult, err := s.Client.Search(query, bangumi.SearchOption{
 		Start:         start,
 		MaxResult:     maxResult,
 		Type:          s.Type,
@@ -93,4 +122,10 @@ func (s *BangumiSearchService) Search(query string, page, size int) (*model.Sear
 	}
 
 	return sr, nil
+}
+
+type FallBackSearchService struct{}
+
+func (s *FallBackSearchService) Search(query string, page, size int) (*model.SearchResult, error) {
+	return nil, nil
 }
