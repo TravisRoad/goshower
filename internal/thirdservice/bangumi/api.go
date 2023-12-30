@@ -8,7 +8,6 @@ import (
 func (c *Client) Search(query string, options SearchOption) (*SearchResp, error) {
 	u := url.URL{
 		Scheme: "https",
-		Host:   c.Host,
 		Path:   fmt.Sprintf("/search/subject/%s", query),
 	}
 	q := u.Query()
@@ -38,7 +37,7 @@ func (c *Client) Search(query string, options SearchOption) (*SearchResp, error)
 func (c *Client) GetSubjectDetail(id int) (*SubjectDetail, error) {
 	u := url.URL{
 		Scheme: "https",
-		Host:   c.Host,
+		Host:   Host,
 		Path:   fmt.Sprintf("/v0/subjects/%d", id),
 	}
 	url := u.String()

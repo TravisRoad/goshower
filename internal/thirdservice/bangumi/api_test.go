@@ -43,7 +43,6 @@ func TestClient_Search(t *testing.T) {
 				}
 			}),
 		},
-		Host:      "api.bgm.tv",
 		Token:     "token",
 		UserAgent: "useragent",
 	}
@@ -65,7 +64,6 @@ func TestClient_GetSubjectDetail(t *testing.T) {
 				}
 			}),
 		},
-		Host:      "api.bgm.tv",
 		Token:     "token",
 		UserAgent: "useragent",
 	}
