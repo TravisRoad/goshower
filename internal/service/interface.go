@@ -6,7 +6,7 @@ import (
 )
 
 type ISearchService interface {
-	Search(query string, page, size int, st SourceType) (*model.SearchResult, error)
+	Search(query string, page, size int, source global.Source, t global.Type) (*model.SearchResult, error)
 }
 
 // MediaService

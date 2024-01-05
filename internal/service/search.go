@@ -11,6 +11,7 @@ import (
 	"github.com/TravisRoad/goshower/internal/model"
 	"github.com/TravisRoad/goshower/internal/thirdservice/bangumi"
 	"github.com/TravisRoad/goshower/internal/thirdservice/tmdb/v3"
+	"go.uber.org/zap"
 )
 
 type SearchSingleton struct {
@@ -30,8 +31,6 @@ var (
 	tmdbSearcher    = NewSearchSingleton()
 )
 
-var fallBackSearchService = &FallBackSearchService{}
-
 const (
 	BangumiToken     = "BANGUMI_TOKEN"
 	BangumiUserAgent = "BANGUMI_USER_AGENT"
@@ -41,28 +40,32 @@ const (
 
 type SearchService struct{}
 
-func (s *SearchService) Search(query string, page, size int, st SourceType) (*model.SearchResult, error) {
-	searcher := GetSearcher(st)
+func (s *SearchService) Search(query string, page, size int, source global.Source, t global.Type) (*model.SearchResult, error) {
+	searcher := GetSearcher(source, t)
+	if searcher == nil {
+		global.Logger.Error("no such source", zap.String("source", source.String()), zap.String("type", t.String()))
+		return nil, ErrNoSuchSource
+	}
 	return searcher.Search(query, page, size)
 }
 
 // Searcher
 // Search the query thing
 
-func GetSearcher(st SourceType) Searcher {
-	switch st.Source {
+func GetSearcher(source global.Source, t global.Type) Searcher {
+	switch source {
 	case global.SourceBangumi:
-		return GetBangumiSearcher(st.Type)
+		return getBangumiSearcher(t)
 	case global.SourceTMDB:
-		return GetTMDBSearcher(st.Type)
+		return getTMDBSearcher(t)
 	default:
-		return fallBackSearchService
+		return nil
 	}
 }
 
 // Bangumi Searcher
 
-func GetBangumiSearcher(t global.Type) Searcher {
+func getBangumiSearcher(t global.Type) Searcher {
 	if bangumiSearcher.Searcher == nil {
 		bangumiSearcher.Once.Do(func() {
 			token, _ := os.LookupEnv(BangumiToken)
@@ -72,7 +75,7 @@ func GetBangumiSearcher(t global.Type) Searcher {
 				Token:     token,
 				UserAgent: ua,
 			}
-			bss := &BangumiSearchService{
+			bss := &BangumiSearcher{
 				Client: cli,
 				Type:   int(toBangumiType(t)),
 				Source: global.SourceBangumi,
@@ -83,13 +86,13 @@ func GetBangumiSearcher(t global.Type) Searcher {
 	return bangumiSearcher.Searcher
 }
 
-type BangumiSearchService struct {
+type BangumiSearcher struct {
 	Client *bangumi.Client
 	Type   int
 	Source global.Source
 }
 
-func (s *BangumiSearchService) Search(query string, page, size int) (*model.SearchResult, error) {
+func (s *BangumiSearcher) Search(query string, page, size int) (*model.SearchResult, error) {
 	maxResult := min(size, 25)
 	start := min((page-1)*maxResult, 0)
 
@@ -134,7 +137,7 @@ func (s *BangumiSearchService) Search(query string, page, size int) (*model.Sear
 
 // TMDB Searcher
 
-func GetTMDBSearcher(t global.Type) Searcher {
+func getTMDBSearcher(t global.Type) Searcher {
 	if tmdbSearcher.Searcher == nil {
 		tmdbSearcher.Once.Do(func() {
 			token, _ := os.LookupEnv(TMDBToken)
@@ -142,7 +145,7 @@ func GetTMDBSearcher(t global.Type) Searcher {
 				Cli:   &http.Client{},
 				Token: token,
 			}
-			s := &TMDBSearchService{
+			s := &TMDBSearcher{
 				Client: cli,
 				Source: global.SourceTMDB,
 			}
@@ -152,12 +155,12 @@ func GetTMDBSearcher(t global.Type) Searcher {
 	return tmdbSearcher.Searcher
 }
 
-type TMDBSearchService struct {
+type TMDBSearcher struct {
 	Client *tmdb.Client
 	Source global.Source
 }
 
-func (s *TMDBSearchService) Search(query string, page, size int) (*model.SearchResult, error) {
+func (s *TMDBSearcher) Search(query string, page, size int) (*model.SearchResult, error) {
 	tmdbResult, err := s.Client.SearchMovie(query, tmdb.SearchMovieOption{Language: "zh-CN", Page: page})
 	if err != nil {
 		return nil, err
@@ -187,13 +190,5 @@ func (s *TMDBSearchService) Search(query string, page, size int) (*model.SearchR
 		sr.Items[i] = searchItem
 	}
 
-	return nil, nil
-}
-
-// fallback searcher
-
-type FallBackSearchService struct{}
-
-func (s *FallBackSearchService) Search(query string, page, size int) (*model.SearchResult, error) {
 	return nil, nil
 }
