@@ -25,7 +25,7 @@ func initDB() *gorm.DB {
 
 	err := db.AutoMigrate(
 		&model.User{},
-		&model.AnimeMedia{},
+		&model.Media{},
 		&model.AnimeRecord{},
 	)
 
