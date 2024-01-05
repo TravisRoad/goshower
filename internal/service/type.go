@@ -5,11 +5,6 @@ import (
 	"github.com/TravisRoad/goshower/internal/thirdservice/bangumi"
 )
 
-type SourceType struct {
-	Source global.Source
-	Type   global.Type
-}
-
 func toBangumiType(t global.Type) bangumi.SubjectType {
 	switch t {
 	case global.TypeAnime:
