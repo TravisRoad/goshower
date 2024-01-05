@@ -7,8 +7,10 @@ import (
 )
 
 type SearchResult struct {
-	Total int          `json:"total"`
-	Items []SearchItem `json:"items"`
+	TotalResult int          `json:"total_result"`
+	TotalPage   int          `json:"total_page"`
+	Page        int          `json:"page"`
+	Items       []SearchItem `json:"items"`
 }
 
 type SearchItem struct {

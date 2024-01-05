@@ -1,6 +1,7 @@
 package service
 
 import (
+	"math"
 	"net/http"
 	"os"
 	"sync"
@@ -9,6 +10,7 @@ import (
 	"github.com/TravisRoad/goshower/global"
 	"github.com/TravisRoad/goshower/internal/model"
 	"github.com/TravisRoad/goshower/internal/thirdservice/bangumi"
+	"github.com/TravisRoad/goshower/internal/thirdservice/tmdb/v3"
 )
 
 type SearchSingleton struct {
@@ -16,11 +18,16 @@ type SearchSingleton struct {
 	Searcher Searcher
 }
 
-var (
-	bangumiSearcher = SearchSingleton{
+func NewSearchSingleton() SearchSingleton {
+	return SearchSingleton{
 		Once:     &sync.Once{},
 		Searcher: nil,
 	}
+}
+
+var (
+	bangumiSearcher = NewSearchSingleton()
+	tmdbSearcher    = NewSearchSingleton()
 )
 
 var fallBackSearchService = &FallBackSearchService{}
@@ -28,12 +35,9 @@ var fallBackSearchService = &FallBackSearchService{}
 const (
 	BangumiToken     = "BANGUMI_TOKEN"
 	BangumiUserAgent = "BANGUMI_USER_AGENT"
-	BangumiHost      = "api.bgm.tv"
-)
 
-type ISearchService interface {
-	Search(query string, page, size int, st SourceType) (*model.SearchResult, error)
-}
+	TMDBToken = "TMDB_TOKEN"
+)
 
 type SearchService struct{}
 
@@ -42,18 +46,21 @@ func (s *SearchService) Search(query string, page, size int, st SourceType) (*mo
 	return searcher.Search(query, page, size)
 }
 
-type Searcher interface {
-	Search(query string, page, size int) (*model.SearchResult, error)
-}
+// Searcher
+// Search the query thing
 
 func GetSearcher(st SourceType) Searcher {
 	switch st.Source {
 	case global.SourceBangumi:
 		return GetBangumiSearcher(st.Type)
+	case global.SourceTMDB:
+		return GetTMDBSearcher(st.Type)
 	default:
 		return fallBackSearchService
 	}
 }
+
+// Bangumi Searcher
 
 func GetBangumiSearcher(t global.Type) Searcher {
 	if bangumiSearcher.Searcher == nil {
@@ -62,7 +69,6 @@ func GetBangumiSearcher(t global.Type) Searcher {
 			ua, _ := os.LookupEnv(BangumiUserAgent)
 			cli := &bangumi.Client{
 				Cli:       &http.Client{},
-				Host:      BangumiHost,
 				Token:     token,
 				UserAgent: ua,
 			}
@@ -97,7 +103,9 @@ func (s *BangumiSearchService) Search(query string, page, size int) (*model.Sear
 		return nil, nil
 	}
 	sr := &model.SearchResult{}
-	sr.Total = searchResult.Results
+	sr.TotalResult = searchResult.Results
+	sr.Page = page
+	sr.TotalPage = int(math.Ceil(float64(searchResult.Results) / float64(maxResult)))
 	for _, item := range searchResult.List {
 		searchItem := model.SearchItem{}
 		searchItem.Title = item.Name
@@ -123,6 +131,66 @@ func (s *BangumiSearchService) Search(query string, page, size int) (*model.Sear
 
 	return sr, nil
 }
+
+// TMDB Searcher
+
+func GetTMDBSearcher(t global.Type) Searcher {
+	if tmdbSearcher.Searcher == nil {
+		tmdbSearcher.Once.Do(func() {
+			token, _ := os.LookupEnv(TMDBToken)
+			cli := &tmdb.Client{
+				Cli:   &http.Client{},
+				Token: token,
+			}
+			s := &TMDBSearchService{
+				Client: cli,
+				Source: global.SourceTMDB,
+			}
+			tmdbSearcher.Searcher = s
+		})
+	}
+	return tmdbSearcher.Searcher
+}
+
+type TMDBSearchService struct {
+	Client *tmdb.Client
+	Source global.Source
+}
+
+func (s *TMDBSearchService) Search(query string, page, size int) (*model.SearchResult, error) {
+	tmdbResult, err := s.Client.SearchMovie(query, tmdb.SearchMovieOption{Language: "zh-CN", Page: page})
+	if err != nil {
+		return nil, err
+	}
+	sr := &model.SearchResult{}
+	sr.TotalPage = tmdbResult.TotalPages
+	sr.TotalResult = tmdbResult.TotalResults
+	sr.Page = tmdbResult.Page
+	sr.Items = make([]model.SearchItem, len(tmdbResult.Results))
+	for i, item := range tmdbResult.Results {
+		searchItem := model.SearchItem{}
+		searchItem.Title = item.Title
+		searchItem.TitleCN = item.OriginalTitle
+		searchItem.Status = 0
+		searchItem.StatusText = ""
+		date, _ := time.Parse("2006-01-02", item.ReleaseDate)
+		searchItem.Date = date
+		searchItem.Desc = item.Overview
+		searchItem.Rating = uint8(min(item.VoteAverage*10, 100.0))
+		searchItem.Source = s.Source
+		searchItem.Pic = item.PosterPath
+		id, err := global.Sqids.Encode([]uint64{uint64(s.Source), uint64(item.ID)})
+		if err != nil {
+			return nil, err
+		}
+		searchItem.ID = id
+		sr.Items[i] = searchItem
+	}
+
+	return nil, nil
+}
+
+// fallback searcher
 
 type FallBackSearchService struct{}
 
