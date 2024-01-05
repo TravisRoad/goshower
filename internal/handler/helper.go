@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	"github.com/TravisRoad/goshower/global"
-	"github.com/TravisRoad/goshower/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -34,14 +33,27 @@ func getPageAndSize(c *gin.Context) (page int, size int) {
 	return
 }
 
-func getSourceType(c *gin.Context) (st service.SourceType) {
-	// source := c.Query("source")
-	// t := c.Query("type")
+func getSourceType(c *gin.Context) (src global.Source, t global.Type) {
+	sstr := c.Query("source")
+	tstr := c.Query("type")
+	var err error
+	var x int
 
-	return service.SourceType{
-		Source: global.SourceBangumi,
-		Type:   global.TypeAnime,
+	x, err = strconv.Atoi(sstr)
+	if err != nil {
+		src = global.SourceNil
+	} else {
+		src = global.Source(x)
 	}
+
+	x, err = strconv.Atoi(tstr)
+	if err != nil {
+		t = global.TypeNil
+	} else {
+		t = global.Type(x)
+	}
+
+	return src, t
 }
 
 func NewHTTPError(c *gin.Context, code int, msg string, statHTTP int) {

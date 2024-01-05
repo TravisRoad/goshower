@@ -22,9 +22,10 @@ func (sa *SearchHandler) Search(c *gin.Context) {
 		return
 	}
 	page, size := getPageAndSize(c)
+	source, t := getSourceType(c)
 
-	searcher := service.GetSearcher(getSourceType(c))
-	result, err := searcher.Search(query, page, size)
+	searchService := new(service.SearchService)
+	result, err := searchService.Search(query, page, size, source, t)
 	if err != nil {
 		NewHTTPError(
 			c,
