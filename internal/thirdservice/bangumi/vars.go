@@ -1,5 +1,8 @@
 package bangumi
 
 const (
-	Host = "api.bgm.tv"
+	Host    = "bangumi.tv"
+	ApiHost = "api.bgm.tv"
+
+	SubjectURL = "https://bangumi.tv/subject"
 )
