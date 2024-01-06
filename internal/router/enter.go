@@ -15,6 +15,7 @@ func Register(r *gin.Engine) {
 		&AuthRouter{},
 		&AdminRouter{},
 		&SearchRouter{},
+		&RecordRouter{},
 	}
 
 	for _, rt := range rts {
