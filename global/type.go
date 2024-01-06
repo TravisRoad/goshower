@@ -21,3 +21,15 @@ const (
 	TypeBook
 	TypeMusic
 )
+
+//go:generate stringer -type=Status
+type Status int
+
+const (
+	StatusNil Status = iota
+	StatusWish
+	StatusWatched
+	StatusWatching
+	StatusOnHold
+	StatusDropped
+)
