@@ -1,7 +1,11 @@
 package tmdb
 
 const (
-	Host = "api.themoviedb.org"
+	Host    = "www.themoviedb.org"
+	ApiHost = "api.themoviedb.org"
+
+	MovieURL = "https://www.themoviedb.org/movie"
+	PicURL   = "https://image.tmdb.org/t/p"
 )
 
 type SearchMovieRespItem struct {

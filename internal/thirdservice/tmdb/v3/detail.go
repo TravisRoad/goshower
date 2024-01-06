@@ -6,10 +6,10 @@ import (
 )
 
 // https://developer.themoviedb.org/reference/movie-details
-func (c *Client) Detail(id int, option MovieDetailOption) (*MovieDetailResp, error) {
+func (c *Client) MovieDetail(id int, option MovieDetailOption) (*MovieDetailResp, error) {
 	u := url.URL{
 		Scheme: "https",
-		Host:   Host,
+		Host:   ApiHost,
 		Path:   fmt.Sprintf("/3/movie/%d", id),
 	}
 	q := u.Query()

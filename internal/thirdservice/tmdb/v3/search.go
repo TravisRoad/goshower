@@ -9,7 +9,7 @@ import (
 func (c *Client) SearchMovie(query string, option SearchMovieOption) (*SearchMovieResp, error) {
 	u := url.URL{
 		Scheme: "https",
-		Host:   Host,
+		Host:   ApiHost,
 		Path:   "/3/search/movie",
 	}
 	q := u.Query()
