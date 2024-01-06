@@ -12,7 +12,7 @@ type Media struct {
 	Source      global.Source `json:"source" gorm:"type:tinyint;comment:来源;uniqueIndex:idx_source"`
 	Type        global.Type   `json:"type" gorm:"type:tinyint;comment:类型;uniqueIndex:idx_source"`
 	Link        string        `json:"link" gorm:"type:varchar(128);comment:链接"`
-	MediaID     int64         `json:"media_id" gorm:"type:int;comment:媒体ID"`
+	MediaID     int           `json:"media_id" gorm:"type:int;comment:媒体ID"`
 	Title       string        `json:"title" gorm:"type:varchar(128);comment:标题"`
 	TitleCn     string        `json:"title_cn" gorm:"type:varchar(128);comment:标题中文"`
 	Summary     string        `json:"summary" gorm:"type:text;comment:概述"`
