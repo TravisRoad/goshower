@@ -11,8 +11,7 @@ type ISearchService interface {
 
 // MediaService
 type IMediaService interface {
-	AddMedia(id int, source global.Source, t global.Type) error
-	MediaDetail(id int, source global.Source, t global.Type) (*model.Media, error)
+	MediaDetail(id int, source global.Source) (*model.Media, error)
 }
 
 type Searcher interface {
@@ -21,5 +20,9 @@ type Searcher interface {
 
 type Mediaer interface {
 	MediaDetail(id int) (*model.Media, error)
-	AddMedia(id int) error
+}
+
+type Recorder interface {
+	RecordSubject(id int, uid uint, action global.Status) error
+	RecordEp(id int, uid uint, action global.Status, ep int) error
 }

@@ -17,8 +17,8 @@ func TestGetSearcher(t *testing.T) {
 		args args
 		want Searcher
 	}{
-		{"bangumi", args{global.SourceBangumi, global.TypeAnime}, &BangumiSearcher{}},
-		{"tmdb", args{global.SourceTMDB, global.TypeMovie}, &TMDBSearcher{}},
+		{"bangumi", args{global.SourceBangumi, global.TypeAnime}, &BangumiService{}},
+		{"tmdb", args{global.SourceTMDB, global.TypeMovie}, &TMDBService{}},
 		{"fallback", args{global.SourceNil, global.TypeNil}, nil},
 	}
 	for _, tt := range tests {

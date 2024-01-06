@@ -8,6 +8,7 @@ import (
 	"github.com/TravisRoad/goshower/global"
 	"github.com/TravisRoad/goshower/internal/model"
 	"github.com/TravisRoad/goshower/internal/thirdservice/bangumi"
+	"github.com/TravisRoad/goshower/internal/thirdservice/tmdb/v3"
 	"go.uber.org/zap"
 )
 
@@ -25,30 +26,27 @@ func NewMediaSingleton() MediaSingleton {
 
 var (
 	bangumiMediaer = NewMediaSingleton()
+	tmdbMediaer    = NewMediaSingleton()
 )
 
 type MediaService struct{}
 
-func (s *MediaService) AddMedia(id int, source global.Source, t global.Type) error {
-	mediaer := getMediaer(source, t)
-	err := mediaer.AddMedia(id)
-	return err
-}
-
-func (s *MediaService) MediaDetail(id int, source global.Source, t global.Type) (*model.Media, error) {
-	Mediaer := getMediaer(source, t)
+func (s *MediaService) MediaDetail(id int, source global.Source) (*model.Media, error) {
+	Mediaer := getMediaer(source)
 	if Mediaer == nil {
-		global.Logger.Error("no such source", zap.String("source", source.String()), zap.String("type", t.String()))
+		global.Logger.Error("no such source", zap.String("source", source.String()))
 		return nil, ErrNoSuchSource
 	}
 	detail, err := Mediaer.MediaDetail(id)
 	return detail, err
 }
 
-func getMediaer(source global.Source, t global.Type) Mediaer {
+func getMediaer(source global.Source) Mediaer {
 	switch source {
 	case global.SourceBangumi:
-		return getBangumiMediaer(t)
+		return getBangumiMediaer()
+	case global.SourceTMDB:
+		return getTMDBMediaer()
 	default:
 		return nil
 	}
@@ -60,7 +58,7 @@ func getMediaer(source global.Source, t global.Type) Mediaer {
 // ------------------------
 
 // Bangumi Mediaer
-func getBangumiMediaer(t global.Type) Mediaer {
+func getBangumiMediaer() Mediaer {
 	if bangumiMediaer.Mediaer == nil {
 		bangumiMediaer.Once.Do(func() {
 			token, _ := os.LookupEnv(BangumiToken)
@@ -70,7 +68,8 @@ func getBangumiMediaer(t global.Type) Mediaer {
 				Token:     token,
 				UserAgent: ua,
 			}
-			bangumiMediaer.Mediaer = &BangumiMediaer{
+			bangumiMediaer.Mediaer = &BangumiService{
+				Source: global.SourceBangumi,
 				Client: cli,
 			}
 		})
@@ -78,14 +77,20 @@ func getBangumiMediaer(t global.Type) Mediaer {
 	return bangumiMediaer.Mediaer
 }
 
-type BangumiMediaer struct {
-	Client *bangumi.Client
-}
-
-func (s *BangumiMediaer) MediaDetail(id int) (*model.Media, error) {
-	return nil, nil
-}
-
-func (s *BangumiMediaer) AddMedia(id int) error {
-	return nil
+// tmdb mediaer
+func getTMDBMediaer() Mediaer {
+	if tmdbMediaer.Mediaer == nil {
+		tmdbMediaer.Once.Do(func() {
+			token, _ := os.LookupEnv(TMDBToken)
+			cli := &tmdb.Client{
+				Cli:   &http.Client{},
+				Token: token,
+			}
+			tmdbMediaer.Mediaer = &TMDBService{
+				Source: global.SourceTMDB,
+				Client: cli,
+			}
+		})
+	}
+	return tmdbMediaer.Mediaer
 }
