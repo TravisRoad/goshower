@@ -29,7 +29,7 @@ type GetUsersResponse struct {
 	} `json:"data"`
 }
 
-func (aa *AdminHandler) GetUsers(c *gin.Context) {
+func (ah *AdminHandler) GetUsers(c *gin.Context) {
 	us := new(service.UserService)
 
 	page, size := getPageAndSize(c)
@@ -61,7 +61,7 @@ func (aa *AdminHandler) GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (aa *AdminHandler) UpdateUser(c *gin.Context) {
+func (ah *AdminHandler) UpdateUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -100,7 +100,7 @@ func (aa *AdminHandler) UpdateUser(c *gin.Context) {
 	})
 }
 
-func (aa *AdminHandler) DeleteUser(c *gin.Context) {
+func (ah *AdminHandler) DeleteUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -125,7 +125,7 @@ func (aa *AdminHandler) DeleteUser(c *gin.Context) {
 	})
 }
 
-func (aa *AdminHandler) AddUser(c *gin.Context) {
+func (ah *AdminHandler) AddUser(c *gin.Context) {
 	u := model.User{}
 	if err := c.ShouldBindJSON(&u); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

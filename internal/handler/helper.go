@@ -7,6 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var (
+	successResp = gin.H{
+		"code": 0,
+		"msg":  "success",
+	}
+)
+
 func clamp(x, min, max int) int {
 	if x < min {
 		return min
@@ -56,7 +63,7 @@ func getSourceType(c *gin.Context) (src global.Source, t global.Type) {
 	return src, t
 }
 
-func NewHTTPError(c *gin.Context, code int, msg string, statHTTP int) {
+func rHTTPError(c *gin.Context, code int, msg string, statHTTP int) {
 	er := BaseResponse{
 		Code: code,
 		Msg:  msg,

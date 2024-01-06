@@ -13,7 +13,7 @@ type SearchHandler struct{}
 func (sa *SearchHandler) Search(c *gin.Context) {
 	query := c.Query("q")
 	if len(query) == 0 {
-		NewHTTPError(
+		rHTTPError(
 			c,
 			http.StatusBadRequest,
 			"query is empty",
@@ -27,7 +27,7 @@ func (sa *SearchHandler) Search(c *gin.Context) {
 	searchService := new(service.SearchService)
 	result, err := searchService.Search(query, page, size, source, t)
 	if err != nil {
-		NewHTTPError(
+		rHTTPError(
 			c,
 			http.StatusInternalServerError,
 			err.Error(),
