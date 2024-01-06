@@ -35,19 +35,36 @@ func (Media) TableName() string {
 	return "media"
 }
 
-type Record struct {
+type SubjectRecord struct {
 	gorm.Model
-	UserID  uint `json:"user_id" gorm:"type:bigint;comment:用户ID;index:idx_user_id"`
+	UserID  uint `json:"user_id" gorm:"comment:用户ID;index:idx_user_media"`
+	MediaID int  `json:"media_id" gorm:"type:bigint;comment:媒体ID;index:idx_user_media"`
 	Action  int  `json:"action" gorm:"type:tinyint;comment:动作类型"`
-	MediaID uint `json:"media_id" gorm:"type:bigint;comment:媒体ID"`
 }
 
-type AnimeRecord struct {
-	Record
-	MediaAction bool `json:"media_action" gorm:"comment:true为媒体动作，否则为面向单集的动作"`
-	TargetEp    int  `json:"target_ep" gorm:"comment:目标集数"`
+func (SubjectRecord) TableName() string {
+	return "subject_record"
 }
 
-func (AnimeRecord) TableName() string {
-	return "anime_record"
+type EpRecord struct {
+	gorm.Model
+	UserID  uint `json:"user_id" gorm:"comment:用户ID;index:idx_user_id"`
+	Action  int  `json:"action" gorm:"type:tinyint;comment:动作类型"`
+	Ep      int  `json:"ep" gorm:"comment:目标集数"`
+	MediaID int  `json:"media_id" gorm:"type:int;comment:媒体ID"`
+}
+
+func (EpRecord) TableName() string {
+	return "ep_record"
+}
+
+type EpRecordDetail struct {
+	gorm.Model
+	UserID  uint   `json:"user_id" gorm:"comment:用户ID;index:idx_user_id"`
+	Detail  []byte `json:"detail" gorm:"type:blob;comment:详情"`
+	MediaID int    `json:"media_id" gorm:"type:int;comment:媒体ID"`
+}
+
+func (EpRecordDetail) TableName() string {
+	return "ep_record_detail"
 }
