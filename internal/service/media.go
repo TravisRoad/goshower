@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"sync"
@@ -10,6 +11,7 @@ import (
 	"github.com/TravisRoad/goshower/internal/thirdservice/bangumi"
 	"github.com/TravisRoad/goshower/internal/thirdservice/tmdb/v3"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 type MediaSingleton struct {
@@ -32,23 +34,42 @@ var (
 type MediaService struct{}
 
 func (s *MediaService) MediaDetail(id int, source global.Source) (*model.Media, error) {
-	Mediaer := getMediaer(source)
-	if Mediaer == nil {
-		global.Logger.Error("no such source", zap.String("source", source.String()))
-		return nil, ErrNoSuchSource
-	}
-	detail, err := Mediaer.MediaDetail(id)
-	return detail, err
+	var media *model.Media
+	err := global.DB.Transaction(func(tx *gorm.DB) error {
+		// check if the media item exsits in database
+		if err := tx.Model(&model.Media{}).Where("media_id = ? AND source = ?", id, source).Take(media).Error; err != nil {
+			if !errors.Is(err, gorm.ErrRecordNotFound) {
+				return err
+			}
+		}
+		// if exsit, return this media item
+		if media != nil {
+			return nil
+		}
+		// else request media detail
+		Mediaer, err := getMediaer(source)
+		if err != nil {
+			global.Logger.Error("no such source", zap.Any("source", source), zap.Error(err))
+			return ErrNoSuchSource
+		}
+		detail, err := Mediaer.MediaDetail(id)
+		if err != nil {
+			return err
+		}
+		media = detail
+		return nil
+	})
+	return media, err
 }
 
-func getMediaer(source global.Source) Mediaer {
+func getMediaer(source global.Source) (Mediaer, error) {
 	switch source {
 	case global.SourceBangumi:
-		return getBangumiMediaer()
+		return getBangumiMediaer(), nil
 	case global.SourceTMDB:
-		return getTMDBMediaer()
+		return getTMDBMediaer(), nil
 	default:
-		return nil
+		return nil, ErrNoSuchSource
 	}
 }
 

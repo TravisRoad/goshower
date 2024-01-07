@@ -12,15 +12,19 @@ func Test_getMediaer(t *testing.T) {
 		source global.Source
 	}
 	tests := []struct {
-		name string
-		args args
-		want Mediaer
+		name    string
+		args    args
+		want    Mediaer
+		wantErr error
 	}{
-		{"bangumi", args{global.SourceBangumi}, &BangumiService{}},
+		{global.SourceBangumi.String(), args{global.SourceBangumi}, &BangumiService{}, nil},
+		{global.SourceTMDB.String(), args{global.SourceTMDB}, &TMDBService{}, nil},
+		{"other", args{}, nil, ErrNoSuchSource},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := getMediaer(tt.args.source)
+			m, err := getMediaer(tt.args.source)
+			assert.ErrorIs(t, err, tt.wantErr)
 			assert.IsType(t, tt.want, m)
 		})
 	}
