@@ -16,6 +16,7 @@ func Register(r *gin.Engine) {
 		&AdminRouter{},
 		&SearchRouter{},
 		&RecordRouter{},
+		&MediaRouter{},
 	}
 
 	for _, rt := range rts {

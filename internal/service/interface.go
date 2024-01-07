@@ -23,6 +23,6 @@ type Mediaer interface {
 }
 
 type Recorder interface {
-	RecordSubject(id int, uid uint, action global.Status) error
-	RecordEp(id int, uid uint, action global.Status, ep int) error
+	RecordSubject(id int, src global.Source, uid uint, action global.Status) error
+	RecordEp(id int, src global.Source, uid uint, action global.Status, ep int) error
 }

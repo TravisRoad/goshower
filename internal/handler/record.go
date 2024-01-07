@@ -19,7 +19,7 @@ type AddSubjectRecordReq struct {
 func (rh *RecordHandler) AddSubjectRecord(c *gin.Context) {
 	sid := c.Param("subjectID")
 
-	_, mid, err := service.DecodeID(sid)
+	src, mid, err := service.DecodeID(sid)
 	if err != nil {
 		rHTTPError(c, http.StatusBadRequest, err.Error(), errcode.SqidsParseFailed)
 		return
@@ -32,7 +32,7 @@ func (rh *RecordHandler) AddSubjectRecord(c *gin.Context) {
 	}
 
 	rs := new(service.RecordService)
-	if err := rs.RecordSubject(mid, uid, req.Action); err != nil {
+	if err := rs.RecordSubject(mid, src, uid, req.Action); err != nil {
 		rHTTPError(c, http.StatusInternalServerError, err.Error(), errcode.Failed)
 		return
 	}

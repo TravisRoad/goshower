@@ -10,15 +10,13 @@ import (
 type Media struct {
 	gorm.Model
 	Source      global.Source `json:"source" gorm:"type:tinyint;comment:来源;uniqueIndex:idx_source"`
-	Type        global.Type   `json:"type" gorm:"type:tinyint;comment:类型;uniqueIndex:idx_source"`
+	Type        global.Type   `json:"type" gorm:"type:tinyint;comment:类型"`
 	Link        string        `json:"link" gorm:"type:varchar(128);comment:链接"`
-	MediaID     int           `json:"media_id" gorm:"type:int;comment:媒体ID"`
+	MediaID     int           `json:"media_id" gorm:"type:int;comment:媒体ID;uniqueIndex:idx_source"`
 	Title       string        `json:"title" gorm:"type:varchar(128);comment:标题"`
 	TitleCn     string        `json:"title_cn" gorm:"type:varchar(128);comment:标题中文"`
 	Summary     string        `json:"summary" gorm:"type:text;comment:概述"`
 	PublishData time.Time     `json:"publish_date" gorm:"comment:发布时间"`
-	Status      int           `json:"status" gorm:"type:tinyint;comment:状态"`
-	StatusText  string        `json:"status_text" gorm:"type:varchar(32);comment:状态文本"`
 	Nsfw        bool          `json:"nsfw" gorm:"type:tinyint(1);comment:是否为限制级"`
 	Platform    string        `json:"platform" gorm:"type:varchar(128);comment:发布平台"`
 	ImageLarge  string        `json:"image_large" gorm:"type:varchar(128);comment:图片large地址"`

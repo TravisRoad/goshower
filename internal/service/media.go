@@ -37,26 +37,26 @@ func (s *MediaService) MediaDetail(id int, source global.Source) (*model.Media, 
 	var media *model.Media
 	err := global.DB.Transaction(func(tx *gorm.DB) error {
 		// check if the media item exsits in database
-		if err := tx.Model(&model.Media{}).Where("media_id = ? AND source = ?", id, source).Take(media).Error; err != nil {
-			if !errors.Is(err, gorm.ErrRecordNotFound) {
+		item := model.Media{}
+		err := tx.Model(&model.Media{}).Where("media_id = ? AND source = ?", id, source).Take(&item).Error
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// if not exsit, request media detail
+			Mediaer, err := getMediaer(source)
+			if err != nil {
+				global.Logger.Error("no such source", zap.Any("source", source), zap.Error(err))
+				return ErrNoSuchSource
+			}
+			detail, err := Mediaer.MediaDetail(id)
+			if err != nil {
 				return err
 			}
-		}
-		// if exsit, return this media item
-		if media != nil {
+			media = detail
 			return nil
 		}
-		// else request media detail
-		Mediaer, err := getMediaer(source)
-		if err != nil {
-			global.Logger.Error("no such source", zap.Any("source", source), zap.Error(err))
-			return ErrNoSuchSource
-		}
-		detail, err := Mediaer.MediaDetail(id)
 		if err != nil {
 			return err
 		}
-		media = detail
+		media = &item
 		return nil
 	})
 	return media, err
