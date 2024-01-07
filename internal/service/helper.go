@@ -45,7 +45,7 @@ func EncodeID(source global.Source, id int) (string, error) {
 
 func DecodeID(id string) (global.Source, int, error) {
 	lz := global.Sqids.Decode(id)
-	if len(lz) != 0 {
+	if len(lz) != 2 {
 		return global.SourceNil, 0, ErrSubjectInvalid
 	}
 	source := global.Source(lz[0])

@@ -37,6 +37,7 @@ func (c *Client) SearchWithContext(ctx context.Context, query string, options Se
 func (c *Client) Search(query string, options SearchOption) (*SearchResp, error) {
 	u := url.URL{
 		Scheme: "https",
+		Host:   ApiHost,
 		Path:   fmt.Sprintf("/search/subject/%s", query),
 	}
 	q := u.Query()

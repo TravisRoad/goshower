@@ -55,7 +55,7 @@ type SubjectDetail struct {
 		Rank  int         `json:"rank"`
 		Total int         `json:"total"`
 		Count map[int]int `json:"count"`
-		Score int         `json:"score"`
+		Score float32     `json:"score"`
 	} `json:"rating"`
 	Collection struct {
 		Wish    int `json:"wish"`

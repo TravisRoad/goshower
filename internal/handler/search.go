@@ -29,9 +29,9 @@ func (sa *SearchHandler) Search(c *gin.Context) {
 	if err != nil {
 		rHTTPError(
 			c,
-			http.StatusInternalServerError,
-			err.Error(),
 			errcode.Failed,
+			err.Error(),
+			http.StatusInternalServerError,
 		)
 		return
 	}

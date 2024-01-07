@@ -32,8 +32,6 @@ func (s *TMDBService) MediaDetail(id int) (*model.Media, error) {
 		TitleCn:     detail.Title,
 		Summary:     detail.Overview,
 		PublishData: pubDate,
-		Status:      0,
-		StatusText:  "",
 		Nsfw:        detail.Adult,
 		Platform:    "",
 		ImageLarge:  fmt.Sprintf("%s/%s/%s", tmdb.PicURL, "original", detail.PosterPath), // https://image.tmdb.org/t/p/w1280/6pZgH10jhpToPcf0uvyTCPFhWpI.jpg
@@ -67,7 +65,9 @@ func (s *TMDBService) Search(query string, page, size int) (*model.SearchResult,
 		searchItem.Desc = item.Overview
 		searchItem.Rating = uint8(min(item.VoteAverage*10, 100.0))
 		searchItem.Source = s.Source
-		searchItem.Pic = item.PosterPath
+		if len(item.PosterPath) != 0 {
+			searchItem.Pic = fmt.Sprintf("%s/%s/%s", tmdb.PicURL, "w500", item.PosterPath)
+		}
 		id, err := global.Sqids.Encode([]uint64{uint64(s.Source), uint64(item.ID)})
 		if err != nil {
 			return nil, err
@@ -75,6 +75,5 @@ func (s *TMDBService) Search(query string, page, size int) (*model.SearchResult,
 		searchItem.ID = id
 		sr.Items[i] = searchItem
 	}
-
-	return nil, nil
+	return sr, nil
 }

@@ -34,15 +34,13 @@ func (s *BangumiService) MediaDetail(id int) (*model.Media, error) {
 		TitleCn:     detail.NameCn,
 		Summary:     detail.Summary,
 		PublishData: pubDate,
-		Status:      0,
-		StatusText:  "",
 		Nsfw:        detail.Nsfw,
 		Platform:    detail.Platform,
 		ImageLarge:  detail.Images.Large,
 		ImageCommon: detail.Images.Common,
 		ImageMedium: detail.Images.Medium,
 		Eps:         detail.Eps,
-		RatingScore: float32(detail.Rating.Score),
+		RatingScore: detail.Rating.Score,
 	}
 	return res, nil
 }
@@ -58,7 +56,7 @@ func (s *BangumiService) Search(query string, page, size int) (*model.SearchResu
 		ResponseGroup: "large",
 	})
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	sr := &model.SearchResult{}
 	sr.TotalResult = searchResult.Results
