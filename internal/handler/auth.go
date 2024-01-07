@@ -97,6 +97,7 @@ func (aa *AuthHandler) Login(c *gin.Context) {
 func (aa *AuthHandler) Logout(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Clear()
+	session.Options(sessions.Options{MaxAge: -1, Path: "/"})
 	if err := session.Save(); err != nil {
 		rHTTPError(c, errcode.SessionSave, err.Error(), http.StatusInternalServerError)
 		global.Logger.Info("failed to save session", zap.Error(err))
