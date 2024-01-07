@@ -29,6 +29,15 @@ type GetUsersResponse struct {
 	} `json:"data"`
 }
 
+// GetUsers godoc
+// @Summary      get users list
+// @Description  only admin can use this GetUsers
+// @Tags         admin
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  GetUsersResponse
+// @Failure      500  {object}  BaseResponse
+// @Router       /user [get]
 func (ah *AdminHandler) GetUsers(c *gin.Context) {
 	us := new(service.UserService)
 
@@ -61,6 +70,16 @@ func (ah *AdminHandler) GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+// UpdateUser godoc
+// @Summary      update user info
+// @Description  only admin can use this api
+// @Tags         admin
+// @Accept       json
+// @Produce      json
+// @param        req  body  UpdateUserRequest  true  "update"
+// @Success      200  {object}  BaseResponse
+// @Failure      500  {object}  BaseResponse
+// @Router       /user/{id} [post]
 func (ah *AdminHandler) UpdateUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

@@ -16,11 +16,40 @@ definitions:
       msg:
         type: string
     type: object
+  handler.GetUsersResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        properties:
+          page:
+            type: integer
+          size:
+            type: integer
+          total:
+            type: integer
+          users:
+            items:
+              $ref: '#/definitions/model.UserInfo'
+            type: array
+        type: object
+      msg:
+        type: string
+    type: object
   handler.LoginReq:
     properties:
       password:
         type: string
       username:
+        type: string
+    type: object
+  handler.UpdateUserRequest:
+    properties:
+      id:
+        type: integer
+      password:
+        type: string
+      role:
         type: string
     type: object
   model.UserInfo:
@@ -113,6 +142,51 @@ paths:
       summary: logout
       tags:
       - auth
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: only admin can use this GetUsers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.GetUsersResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.BaseResponse'
+      summary: get users list
+      tags:
+      - admin
+  /user/{id}:
+    post:
+      consumes:
+      - application/json
+      description: only admin can use this api
+      parameters:
+      - description: update
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.BaseResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.BaseResponse'
+      summary: update user info
+      tags:
+      - admin
 securityDefinitions:
   BasicAuth:
     type: basic

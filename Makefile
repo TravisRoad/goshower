@@ -9,6 +9,7 @@ clean:
 
 generate:
 	@go generate ./global
+	@swag init
 
 docker:
 	@docker build . -t goshower:latest
